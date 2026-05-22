@@ -2,11 +2,13 @@ import React from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 
 const navItems = [
-  { to: '/', label: 'Dashboard', icon: '📊', end: true },
+  { to: '/dashboard', label: 'Dashboard', icon: '📊' },
   { to: '/contacts', label: 'Contacts', icon: '👥' },
   { to: '/deals', label: 'Deals', icon: '💼' },
   { to: '/tasks', label: 'Tasks', icon: '✅' },
+  { to: '/emails', label: 'Email', icon: '📧' },
   { to: '/ai', label: 'AI Assistant', icon: '🤖' },
+  { to: '/billing', label: 'Billing', icon: '💳' },
 ];
 
 export default function Layout() {
@@ -33,7 +35,7 @@ export default function Layout() {
               end={item.end}
               className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
             >
-              <span>{item.icon}</span>
+              <span role="img" aria-hidden>{item.icon}</span>
               <span>{item.label}</span>
             </NavLink>
           ))}

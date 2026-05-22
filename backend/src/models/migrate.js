@@ -10,6 +10,11 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   company VARCHAR(255),
+  subscription_plan VARCHAR(50) DEFAULT 'free',
+  subscription_status VARCHAR(50) DEFAULT 'active',
+  subscription_end TIMESTAMP,
+  stripe_customer_id VARCHAR(255),
+  gmail_tokens JSONB,
   created_at TIMESTAMP DEFAULT NOW()
 );
 
