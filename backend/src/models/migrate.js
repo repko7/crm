@@ -67,6 +67,15 @@ CREATE TABLE IF NOT EXISTS activities (
   description TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS agent_logs (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  cycle_at TIMESTAMP DEFAULT NOW(),
+  tasks_created INTEGER DEFAULT 0,
+  summary TEXT,
+  details JSONB
+);
 `;
 
 pool.query(schema)

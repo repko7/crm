@@ -10,6 +10,8 @@ const aiRoutes = require('./routes/ai');
 const dashboardRoutes = require('./routes/dashboard');
 const billingRoutes = require('./routes/billing');
 const emailRoutes = require('./routes/email');
+const agentRoutes = require('./routes/agent');
+const agent = require('./agent/agent');
 
 const app = express();
 
@@ -27,8 +29,12 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/email', emailRoutes);
+app.use('/api/agent', agentRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', version: '1.0.0' }));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`CRM backend running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`CRM backend running on port ${PORT}`);
+  agent.start();
+});
