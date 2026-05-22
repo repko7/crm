@@ -71,8 +71,41 @@ async function observe(userId) {
 
 // ─── REASON ───────────────────────────────────────────────────────────────────
 
+function ruleBasedTasks(staleContacts, staleDeals) {
+  const tasks = [];
+  const stageLabels = {
+    prospect: 'qualify',
+    lead: 'reach out to',
+    proposal: 'follow up on proposal with',
+    negotiation: 'close negotiation with',
+    default: 'check in with'
+  };
+  for (const c of staleContacts) {
+    const verb = stageLabels[c.status] || stageLabels.default;
+    tasks.push({
+      type: 'contact', ref_id: c.id,
+      title: `[Agent] Follow up — ${verb} ${c.name}`,
+      description: `No activity for 7+ days. Last known status: ${c.status}. ${c.notes ? 'Notes: ' + c.notes : ''}`.trim(),
+      due_days: 2
+    });
+  }
+  for (const d of staleDeals) {
+    tasks.push({
+      type: 'deal', ref_id: d.id,
+      title: `[Agent] Unblock deal — ${d.title}`,
+      description: `Deal stuck in "${d.stage}" for 14+ days ($${d.value}). ${d.contact_name ? 'Contact: ' + d.contact_name + '.' : ''} ${d.notes || ''}`.trim(),
+      due_days: 3
+    });
+  }
+  return { tasks };
+}
+
 async function reason(staleContacts, staleDeals) {
   if (staleContacts.length === 0 && staleDeals.length === 0) return { tasks: [] };
+
+  if (!process.env.OPENAI_API_KEY) {
+    return ruleBasedTasks(staleContacts, staleDeals);
+  }
 
   const prompt = `You are an autonomous CRM assistant. Analyze the following sales data and decide which follow-up tasks to create. Return ONLY valid JSON in this exact format: {"tasks": [{"type": "contact"|"deal", "ref_id": <number>, "title": "<short action>", "description": "<why this matters>", "due_days": <1-7>}]}
 
@@ -91,9 +124,10 @@ Rules:
 
   const raw = await askAI(prompt);
   try {
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return parsed.tasks && parsed.tasks.length > 0 ? parsed : ruleBasedTasks(staleContacts, staleDeals);
   } catch {
-    return { tasks: [] };
+    return ruleBasedTasks(staleContacts, staleDeals);
   }
 }
 
