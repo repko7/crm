@@ -2,13 +2,15 @@ import React from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 
 const navItems = [
-  { to: '/dashboard', label: 'Dashboard', icon: '📊' },
+  { to: '/dashboard', label: 'Dashboard', icon: '📊', end: true },
   { to: '/contacts', label: 'Contacts', icon: '👥' },
   { to: '/deals', label: 'Deals', icon: '💼' },
   { to: '/tasks', label: 'Tasks', icon: '✅' },
   { to: '/emails', label: 'Email', icon: '📧' },
+  { to: '/reminders', label: 'Reminders', icon: '⏰' },
   { to: '/ai', label: 'AI Assistant', icon: '🤖' },
   { to: '/billing', label: 'Billing', icon: '💳' },
+  { to: '/settings', label: 'Settings', icon: '⚙️' },
 ];
 
 export default function Layout() {
