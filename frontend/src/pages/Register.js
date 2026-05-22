@@ -16,7 +16,7 @@ export default function Register() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       toast.success('Welcome to CRM Pro!');
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Registration failed');
     } finally {
