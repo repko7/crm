@@ -1,0 +1,47 @@
+name: Goal Reminders
+
+on:
+  schedule:
+    - cron: '0 4 * * *'   # 07:00 Київ (UTC+3)
+    - cron: '0 18 * * *'  # 21:00 Київ (UTC+3)
+  workflow_dispatch:        # ручний запуск для тесту
+
+jobs:
+  send-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Визначити тип нагадування
+        id: type
+        run: |
+          HOUR=$(date -u +%H)
+          if [ "$HOUR" = "04" ]; then
+            echo "type=morning" >> $GITHUB_OUTPUT
+          else
+            echo "type=evening" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Ранкове нагадування
+        if: steps.type.outputs.type == 'morning'
+        run: |
+          curl -s -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "from": "onboarding@resend.dev",
+              "to": ["repkooleg@gmail.com"],
+              "subject": "🌅 Доброго ранку, Олег! Час ставити цілі на сьогодні",
+              "html": "<div style=\"font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px;border-radius:12px\"><h1 style=\"color:#1e40af;margin-bottom:8px\">🌅 Ранкове планування</h1><p style=\"font-size:16px;color:#334155\">Привіт, <strong>Олег</strong>!</p><p style=\"color:#475569\">Починається новий день. Витрати 5 хвилин, щоб поставити чіткі SMART-цілі на сьогодні.</p><div style=\"background:#dbeafe;border-left:4px solid #2563eb;padding:16px;border-radius:6px;margin:20px 0\"><p style=\"margin:0;font-weight:600;color:#1e40af\">Запитай себе:</p><ul style=\"color:#1e3a8a;margin:8px 0\"><li>Яка одна найважливіша ціль на сьогодні?</li><li>Як я зрозумію, що досяг її?</li><li>Які конкретні кроки треба зробити?</li></ul></div><p style=\"color:#94a3b8;font-size:12px;margin-top:24px\">CRM Pro · Goal Planning</p></div>"
+            }'
+
+      - name: Вечірнє нагадування
+        if: steps.type.outputs.type == 'evening'
+        run: |
+          curl -s -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "from": "onboarding@resend.dev",
+              "to": ["repkooleg@gmail.com"],
+              "subject": "🌙 Добрий вечір, Олег! Час підбити підсумки дня",
+              "html": "<div style=\"font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px;border-radius:12px\"><h1 style=\"color:#7c3aed;margin-bottom:8px\">🌙 Вечірнє планування</h1><p style=\"font-size:16px;color:#334155\">Привіт, <strong>Олег</strong>!</p><p style=\"color:#475569\">День добігає кінця. Час переглянути свої досягнення та підготуватися до успішного завтра.</p><div style=\"background:#ede9fe;border-left:4px solid #7c3aed;padding:16px;border-radius:6px;margin:20px 0\"><p style=\"margin:0;font-weight:600;color:#6d28d9\">Запитай себе:</p><ul style=\"color:#4c1d95;margin:8px 0\"><li>Які цілі сьогодні вдалось виконати?</li><li>Що завадило і як уникнути цього завтра?</li><li>Які три пріоритети на завтра?</li></ul></div><p style=\"color:#94a3b8;font-size:12px;margin-top:24px\">CRM Pro · Goal Planning</p></div>"
+            }'
