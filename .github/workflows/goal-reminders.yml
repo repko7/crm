@@ -2,48 +2,24 @@ name: Goal Reminders
 
 on:
   schedule:
-    - cron: '0 4 * * *'   # 07:00 Київ (UTC+3)
-    - cron: '0 18 * * *'  # 21:00 Київ (UTC+3)
+    - cron: '0 4 * * *'
+    - cron: '0 18 * * *'
   workflow_dispatch:
 
 jobs:
   send-reminder:
     runs-on: ubuntu-latest
     steps:
-      - name: Визначити тип сесії
-        id: meta
+      - name: Send Telegram reminder
         run: |
           HOUR=$(date -u +%H)
+          BOT="${{ secrets.TELEGRAM_BOT_TOKEN }}"
+          CHAT="${{ secrets.TELEGRAM_CHAT_ID }}"
           if [ "$HOUR" = "04" ]; then
-            echo "type=morning" >> $GITHUB_OUTPUT
+            MSG="Dobroho ranku, Oleh! Chas stavyty tsili na sohodni. Napyshi svoi tsili priamo tut."
           else
-            echo "type=evening" >> $GITHUB_OUTPUT
+            MSG="Dobryy vechir, Oleh! Chas pidbyty pidsumky. Napyshi shcho vdalosia zrobyty sohodni."
           fi
-
-      - name: Ранкове повідомлення в Telegram
-        if: steps.meta.outputs.type == 'morning'
-        run: |
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            --data-urlencode "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
-            --data-urlencode "text=🌅 Доброго ранку, Олег!
-
-Починається новий день. Час поставити чіткі цілі 🎯
-
-Напиши свої цілі на сьогодні прямо сюди — я збережу і порівняю з попередніми днями.
-
-Підказка: опиши 1-3 головні цілі" \
-            -d "parse_mode=HTML"
-
-      - name: Вечірнє повідомлення в Telegram
-        if: steps.meta.outputs.type == 'evening'
-        run: |
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            --data-urlencode "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
-            --data-urlencode "text=🌙 Добрий вечір, Олег!
-
-День добігає кінця. Час підбити підсумки 📊
-
-Напиши що вдалось зробити сьогодні — я порівняю з ранковими цілями і дам AI-аналіз!
-
-Підказка: що виконав, що не вийшло, пріоритети на завтра" \
-            -d "parse_mode=HTML"
+          curl -s -X POST "https://api.telegram.org/bot${BOT}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "{\"chat_id\":\"${CHAT}\",\"text\":\"${MSG}\"}"
