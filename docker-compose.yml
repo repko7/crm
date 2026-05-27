@@ -31,5 +31,18 @@ services:
     depends_on:
       - backend
 
+  goal-worker:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://crm_user:crm_pass@db:5432/crm_db
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      FRONTEND_URL: http://localhost:3000
+    command: node src/workers/goalReminderWorker.js
+    depends_on:
+      - db
+
 volumes:
   pgdata:
