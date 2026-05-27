@@ -59,7 +59,7 @@ ${historyText}
 };
 
 const getSessionType = () => {
-  const hour = new Date().getUTCHours() + 3; // Kyiv UTC+3
+  const hour = (new Date().getUTCHours() + 3) % 24; // Kyiv UTC+3
   return hour < 15 ? 'morning' : 'evening';
 };
 
@@ -68,12 +68,15 @@ const processMessage = async (text) => {
   const sessionType = getSessionType();
   const isMorning = sessionType === 'morning';
 
-  // Find user by telegram chat_id or use default user
-  const userRes = await pool.query(
+  // Find user with reminders enabled, fallback to first user
+  let userRes = await pool.query(
     `SELECT id, name FROM users WHERE goal_reminder_enabled = TRUE ORDER BY id LIMIT 1`
   );
   if (!userRes.rows[0]) {
-    await sendMessage('❌ Не знайдено активного користувача. Увімкни нагадування у налаштуваннях CRM.');
+    userRes = await pool.query(`SELECT id, name FROM users ORDER BY id LIMIT 1`);
+  }
+  if (!userRes.rows[0]) {
+    await sendMessage('❌ Немає жодного користувача в системі. Спочатку зареєструйся в CRM.');
     return;
   }
   const { id: userId, name: userName } = userRes.rows[0];
@@ -96,11 +99,16 @@ const processMessage = async (text) => {
 
   await sendMessage(`✅ <b>Збережено!</b>\n\n${isMorning ? '🌅 Ранкові цілі' : '🌙 Вечірні досягнення'} за ${today} записані.`);
 
-  // Get AI analysis
+  // Get AI analysis and save to DB
   try {
     await sendMessage('🤖 Аналізую...');
     const analysis = await getAIAnalysis(sessionType, text, history.rows);
     if (analysis) {
+      await pool.query(
+        `UPDATE daily_checkins SET ai_analysis=$1, updated_at=NOW()
+         WHERE user_id=$2 AND checkin_date=$3 AND session_type=$4`,
+        [analysis, userId, today, sessionType]
+      );
       await sendMessage(`🧠 <b>AI-аналіз:</b>\n\n${analysis}`);
     }
   } catch (e) {

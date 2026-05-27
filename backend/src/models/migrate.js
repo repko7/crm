@@ -112,8 +112,11 @@ CREATE TABLE IF NOT EXISTS daily_checkins (
   mood INTEGER,
   ai_analysis TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(user_id, checkin_date, session_type)
 );
+
+ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();
 
 CREATE TABLE IF NOT EXISTS goals (
   id SERIAL PRIMARY KEY,
