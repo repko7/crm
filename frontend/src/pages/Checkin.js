@@ -19,7 +19,7 @@ export default function Checkin() {
   const token = params.get('token');
   const date = params.get('date');
   const type = params.get('type');
-  const uid = params.get('uid');
+  const email = params.get('email');
 
   const [step, setStep] = useState('loading'); // loading | form | done | error
   const [existing, setExisting] = useState(null);
@@ -30,8 +30,8 @@ export default function Checkin() {
   const isMorning = type === 'morning';
 
   useEffect(() => {
-    if (!token || !date || !type || !uid) { setStep('error'); return; }
-    axios.get(`${API}/checkin/verify`, { params: { token, date, type, uid } })
+    if (!token || !date || !type || !email) { setStep('error'); return; }
+    axios.get(`${API}/checkin/verify`, { params: { token, date, type, email } })
       .then(r => {
         if (r.data.existing) {
           setExisting(r.data.existing);
@@ -56,7 +56,7 @@ export default function Checkin() {
     if (!form.mood) return alert('Оціни свій настрій');
     setSubmitting(true);
     try {
-      const r = await axios.post(`${API}/checkin/submit`, { token, date, type, uid, ...form });
+      const r = await axios.post(`${API}/checkin/submit`, { token, date, type, email, ...form });
       setResult(r.data);
       setStep('done');
     } catch {

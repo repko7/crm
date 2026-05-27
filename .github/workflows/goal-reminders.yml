@@ -20,12 +20,12 @@ jobs:
           else
             TYPE="evening"
           fi
-          # Generate HMAC token: sha256(JWT_SECRET, "uid:date:type")
-          UID="${{ secrets.CHECKIN_USER_ID }}"
+          # Generate HMAC token: sha256(JWT_SECRET, "email:date:type")
+          EMAIL="${{ secrets.CHECKIN_EMAIL }}"
           SECRET="${{ secrets.JWT_SECRET }}"
-          TOKEN=$(echo -n "${UID}:${DATE}:${TYPE}" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $2}')
+          TOKEN=$(echo -n "${EMAIL}:${DATE}:${TYPE}" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $2}')
           FRONTEND="${{ secrets.FRONTEND_URL }}"
-          URL="${FRONTEND}/checkin?token=${TOKEN}&date=${DATE}&type=${TYPE}&uid=${UID}"
+          URL="${FRONTEND}/checkin?token=${TOKEN}&date=${DATE}&type=${TYPE}&email=${EMAIL}"
           echo "type=$TYPE" >> $GITHUB_OUTPUT
           echo "date=$DATE" >> $GITHUB_OUTPUT
           echo "url=$URL" >> $GITHUB_OUTPUT
