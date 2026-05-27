@@ -9,17 +9,33 @@ on:
 jobs:
   send-reminder:
     runs-on: ubuntu-latest
+    env:
+      BOT: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - name: Send Telegram reminder
         run: |
           HOUR=$(date -u +%H)
-          BOT="${{ secrets.TELEGRAM_BOT_TOKEN }}"
-          CHAT="${{ secrets.TELEGRAM_CHAT_ID }}"
           if [ "$HOUR" = "04" ]; then
-            MSG="Dobroho ranku, Oleh! Chas stavyty tsili na sohodni. Napyshi svoi tsili priamo tut."
+            SESSION="morning"
           else
-            MSG="Dobryy vechir, Oleh! Chas pidbyty pidsumky. Napyshi shcho vdalosia zrobyty sohodni."
+            SESSION="evening"
           fi
-          curl -s -X POST "https://api.telegram.org/bot${BOT}/sendMessage" \
-            -H "Content-Type: application/json" \
-            -d "{\"chat_id\":\"${CHAT}\",\"text\":\"${MSG}\"}"
+          python3 -c "
+          import urllib.request, json, sys
+          session = sys.argv[1]
+          chat = sys.argv[2]
+          bot = sys.argv[3]
+          msgs = {
+            'morning': 'Доброго ранку, Олег! Кожного ранку пиши свої цілі та плани на день прямо сюди.',
+            'evening': 'Добрий вечір, Олег! Напиши що вдалося зробити сьогодні — збережу і порівняю з попередніми днями.'
+          }
+          text = msgs[session]
+          data = json.dumps({'chat_id': chat, 'text': text}).encode('utf-8')
+          req = urllib.request.Request(
+            'https://api.telegram.org/bot' + bot + '/sendMessage',
+            data=data,
+            headers={'Content-Type': 'application/json'}
+          )
+          print(urllib.request.urlopen(req).read().decode())
+          " "$SESSION" "$CHAT" "$BOT"
