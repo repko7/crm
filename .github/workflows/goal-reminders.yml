@@ -10,55 +10,40 @@ jobs:
   send-reminder:
     runs-on: ubuntu-latest
     steps:
-      - name: Визначити тип нагадування та згенерувати посилання
+      - name: Визначити тип сесії
         id: meta
         run: |
           HOUR=$(date -u +%H)
-          DATE=$(date -u +%Y-%m-%d)
           if [ "$HOUR" = "04" ]; then
-            TYPE="morning"
+            echo "type=morning" >> $GITHUB_OUTPUT
           else
-            TYPE="evening"
+            echo "type=evening" >> $GITHUB_OUTPUT
           fi
-          EMAIL="${{ secrets.CHECKIN_EMAIL }}"
-          SECRET="${{ secrets.JWT_SECRET }}"
-          FRONTEND="${{ secrets.FRONTEND_URL }}"
-          if [ -n "$FRONTEND" ] && [ -n "$EMAIL" ] && [ -n "$SECRET" ]; then
-            TOKEN=$(echo -n "${EMAIL}:${DATE}:${TYPE}" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $2}')
-            URL="${FRONTEND}/checkin?token=${TOKEN}&date=${DATE}&type=${TYPE}&email=${EMAIL}"
-          else
-            URL=""
-          fi
-          echo "type=$TYPE" >> $GITHUB_OUTPUT
-          echo "date=$DATE" >> $GITHUB_OUTPUT
-          echo "url=$URL" >> $GITHUB_OUTPUT
 
-      - name: Ранкове нагадування
+      - name: Ранкове повідомлення в Telegram
         if: steps.meta.outputs.type == 'morning'
         run: |
-          URL="${{ steps.meta.outputs.url }}"
-          DATE="${{ steps.meta.outputs.date }}"
-          curl -s -X POST https://api.resend.com/emails \
-            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"from\": \"onboarding@resend.dev\",
-              \"to\": [\"repkooleg@gmail.com\"],
-              \"subject\": \"🌅 Доброго ранку, Олег! Час ставити цілі на сьогодні\",
-              \"html\": \"<div style='font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px;border-radius:12px'><h1 style='color:#1e40af;margin-bottom:8px'>🌅 Ранкове планування</h1><p style='font-size:16px;color:#334155'>Привіт, <strong>Олег</strong>!</p><p style='color:#475569'>Починається новий день. Витрати 5 хвилин, щоб поставити чіткі цілі на сьогодні.</p><div style='background:#dbeafe;border-left:4px solid #2563eb;padding:16px;border-radius:6px;margin:20px 0'><p style='margin:0;font-weight:600;color:#1e40af'>Запитай себе:</p><ul style='color:#1e3a8a;margin:8px 0'><li>Яка одна найважливіша ціль на сьогодні?</li><li>Як я зрозумію, що досяг її?</li><li>Які конкретні кроки треба зробити?</li></ul></div>$([ -n '${URL}' ] && echo \"<a href='${URL}' style='display:inline-block;background:#2563eb;color:white;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:16px;margin-top:8px'>✏️ Записати ранкові цілі →</a>\")<p style='color:#94a3b8;font-size:12px;margin-top:24px'>CRM Pro · Goal Planning · ${DATE}</p></div>\"
-            }"
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            --data-urlencode "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            --data-urlencode "text=🌅 Доброго ранку, Олег!
 
-      - name: Вечірнє нагадування
+Починається новий день. Час поставити чіткі цілі 🎯
+
+Напиши свої цілі на сьогодні прямо сюди — я збережу і порівняю з попередніми днями.
+
+Підказка: опиши 1-3 головні цілі" \
+            -d "parse_mode=HTML"
+
+      - name: Вечірнє повідомлення в Telegram
         if: steps.meta.outputs.type == 'evening'
         run: |
-          URL="${{ steps.meta.outputs.url }}"
-          DATE="${{ steps.meta.outputs.date }}"
-          curl -s -X POST https://api.resend.com/emails \
-            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"from\": \"onboarding@resend.dev\",
-              \"to\": [\"repkooleg@gmail.com\"],
-              \"subject\": \"🌙 Добрий вечір, Олег! Час підбити підсумки дня\",
-              \"html\": \"<div style='font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px;border-radius:12px'><h1 style='color:#7c3aed;margin-bottom:8px'>🌙 Вечірній check-in</h1><p style='font-size:16px;color:#334155'>Привіт, <strong>Олег</strong>!</p><p style='color:#475569'>День добігає кінця. Час переглянути досягнення та підготуватися до завтра.</p><div style='background:#ede9fe;border-left:4px solid #7c3aed;padding:16px;border-radius:6px;margin:20px 0'><p style='margin:0;font-weight:600;color:#6d28d9'>Запитай себе:</p><ul style='color:#4c1d95;margin:8px 0'><li>Які цілі сьогодні вдалось виконати?</li><li>Що завадило і як уникнути цього завтра?</li><li>Які три пріоритети на завтра?</li></ul></div>$([ -n '${URL}' ] && echo \"<a href='${URL}' style='display:inline-block;background:#7c3aed;color:white;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:16px;margin-top:8px'>✏️ Заповнити вечірній check-in →</a>\")<p style='color:#94a3b8;font-size:12px;margin-top:24px'>CRM Pro · Goal Planning · ${DATE}</p></div>\"
-            }"
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            --data-urlencode "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            --data-urlencode "text=🌙 Добрий вечір, Олег!
+
+День добігає кінця. Час підбити підсумки 📊
+
+Напиши що вдалось зробити сьогодні — я порівняю з ранковими цілями і дам AI-аналіз!
+
+Підказка: що виконав, що не вийшло, пріоритети на завтра" \
+            -d "parse_mode=HTML"
