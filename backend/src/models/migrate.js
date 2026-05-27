@@ -100,6 +100,21 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS goal_reminder_timezone VARCHAR(50) DE
 ALTER TABLE users ADD COLUMN IF NOT EXISTS goal_last_morning_date DATE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS goal_last_evening_date DATE;
 
+CREATE TABLE IF NOT EXISTS daily_checkins (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  checkin_date DATE NOT NULL,
+  session_type VARCHAR(10) NOT NULL,
+  goals TEXT,
+  achievements TEXT,
+  obstacles TEXT,
+  tomorrow_priorities TEXT,
+  mood INTEGER,
+  ai_analysis TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, checkin_date, session_type)
+);
+
 CREATE TABLE IF NOT EXISTS goals (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,

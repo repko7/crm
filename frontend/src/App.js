@@ -15,6 +15,7 @@ import Billing from './pages/Billing';
 import Reminders from './pages/Reminders';
 import Settings from './pages/Settings';
 import Goals from './pages/Goals';
+import Checkin from './pages/Checkin';
 
 const isAuthenticated = () => !!localStorage.getItem('token');
 
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/" element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/checkin" element={<Checkin />} />
         <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/goals" element={<Goals />} />

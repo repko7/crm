@@ -14,6 +14,7 @@ const remindersRoutes = require('./routes/reminders');
 const teamRoutes = require('./routes/team');
 const { router: publicApiRoutes } = require('./routes/publicApi');
 const goalsRoutes = require('./routes/goals');
+const checkinRoutes = require('./routes/checkin');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/email', emailRoutes);
 app.use('/api/reminders', remindersRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/goals', goalsRoutes);
+app.use('/api/checkin', checkinRoutes);
 app.use('/api', publicApiRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', version: '1.0.0' }));
