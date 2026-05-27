@@ -14,6 +14,7 @@ import Emails from './pages/Emails';
 import Billing from './pages/Billing';
 import Reminders from './pages/Reminders';
 import Settings from './pages/Settings';
+import Goals from './pages/Goals';
 
 const isAuthenticated = () => !!localStorage.getItem('token');
 
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/goals" element={<Goals />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/deals" element={<Deals />} />
           <Route path="/tasks" element={<Tasks />} />

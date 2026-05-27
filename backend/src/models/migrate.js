@@ -92,6 +92,30 @@ CREATE TABLE IF NOT EXISTS api_keys (
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS team_owner_id INTEGER REFERENCES users(id) ON DELETE SET NULL;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'owner';
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS goal_reminder_enabled BOOLEAN DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS goal_reminder_morning INTEGER DEFAULT 7;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS goal_reminder_evening INTEGER DEFAULT 21;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS goal_reminder_timezone VARCHAR(50) DEFAULT 'Europe/Kiev';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS goal_last_morning_date DATE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS goal_last_evening_date DATE;
+
+CREATE TABLE IF NOT EXISTS goals (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  measurable TEXT,
+  action_plan TEXT,
+  relevance TEXT,
+  deadline DATE,
+  category VARCHAR(50) DEFAULT 'personal',
+  status VARCHAR(20) DEFAULT 'active',
+  session_type VARCHAR(10) DEFAULT 'morning',
+  ai_feedback TEXT,
+  progress_notes TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
 `;
 
 pool.query(schema)
