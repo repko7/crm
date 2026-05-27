@@ -7,7 +7,8 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "migrate": "node src/models/migrate.js",
-    "worker:goals": "node src/workers/goalReminderWorker.js"
+    "worker:goals": "node src/workers/goalReminderWorker.js",
+    "worker:telegram": "node src/workers/telegramWorker.js"
   },
   "dependencies": {
     "express": "^4.18.2",
