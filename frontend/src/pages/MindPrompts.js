@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../hooks/useApi';
 import toast from 'react-hot-toast';
 
-const CATEGORIES = ['all', 'focus', 'success', 'constructive', 'problem-solving', 'direction', 'custom'];
+const CATEGORIES = ['all', 'focus', 'success', 'constructive', 'problem-solving', 'direction', 'energy', 'clarity', 'custom'];
 
 const CATEGORY_LABELS = {
   all: 'All',
@@ -11,6 +11,8 @@ const CATEGORY_LABELS = {
   constructive: 'Constructive',
   'problem-solving': 'Problem Solving',
   direction: 'Direction',
+  energy: 'Energy',
+  clarity: 'Clarity',
   custom: 'My Prompts',
 };
 
@@ -20,6 +22,8 @@ const CATEGORY_COLORS = {
   constructive: 'bg-purple-100 text-purple-700',
   'problem-solving': 'bg-orange-100 text-orange-700',
   direction: 'bg-teal-100 text-teal-700',
+  energy: 'bg-rose-100 text-rose-700',
+  clarity: 'bg-amber-100 text-amber-700',
   custom: 'bg-slate-100 text-slate-700',
 };
 
