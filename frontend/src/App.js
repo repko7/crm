@@ -14,6 +14,7 @@ import Emails from './pages/Emails';
 import Billing from './pages/Billing';
 import Reminders from './pages/Reminders';
 import Settings from './pages/Settings';
+import MindPrompts from './pages/MindPrompts';
 
 const isAuthenticated = () => !!localStorage.getItem('token');
 
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/billing" element={<Billing />} />
           <Route path="/billing/success" element={<Billing />} />
           <Route path="/reminders" element={<Reminders />} />
+          <Route path="/mind-prompts" element={<MindPrompts />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>

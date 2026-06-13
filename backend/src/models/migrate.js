@@ -92,6 +92,18 @@ CREATE TABLE IF NOT EXISTS api_keys (
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS team_owner_id INTEGER REFERENCES users(id) ON DELETE SET NULL;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'owner';
+
+CREATE TABLE IF NOT EXISTS mind_prompts (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  text TEXT NOT NULL,
+  category VARCHAR(50) DEFAULT 'custom',
+  is_builtin BOOLEAN DEFAULT FALSE,
+  is_favorite BOOLEAN DEFAULT FALSE,
+  times_used INTEGER DEFAULT 0,
+  last_used_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
+);
 `;
 
 pool.query(schema)
