@@ -12,6 +12,7 @@ const billingRoutes = require('./routes/billing');
 const emailRoutes = require('./routes/email');
 const remindersRoutes = require('./routes/reminders');
 const teamRoutes = require('./routes/team');
+const goalsRoutes = require('./routes/goals');
 const { router: publicApiRoutes } = require('./routes/publicApi');
 
 const app = express();
@@ -32,6 +33,7 @@ app.use('/api/billing', billingRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/reminders', remindersRoutes);
 app.use('/api/team', teamRoutes);
+app.use('/api/goals', goalsRoutes);
 app.use('/api', publicApiRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', version: '1.0.0' }));
