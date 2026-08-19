@@ -13,6 +13,7 @@ const billingRoutes = require('./routes/billing');
 const emailRoutes = require('./routes/email');
 const remindersRoutes = require('./routes/reminders');
 const teamRoutes = require('./routes/team');
+const goalsRoutes = require('./routes/goals');
 const { router: publicApiRoutes } = require('./routes/publicApi');
 const agentRoutes = require('./routes/agent');
 const agent = require('./agent/agent');
@@ -38,6 +39,7 @@ app.use('/api/billing', billingRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/reminders', remindersRoutes);
 app.use('/api/team', teamRoutes);
+app.use('/api/goals', goalsRoutes);
 app.use('/api', publicApiRoutes);
 app.use('/api/agent', agentRoutes);
 

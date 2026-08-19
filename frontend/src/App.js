@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Contacts from './pages/Contacts';
 import Deals from './pages/Deals';
 import Tasks from './pages/Tasks';
+import Goals from './pages/Goals';
 import AIAssistant from './pages/AIAssistant';
 import Emails from './pages/Emails';
 import Billing from './pages/Billing';
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/deals" element={<Deals />} />
           <Route path="/tasks" element={<Tasks />} />
+          <Route path="/goals" element={<Goals />} />
           <Route path="/ai" element={<AIAssistant />} />
           <Route path="/emails" element={<Emails />} />
           <Route path="/billing" element={<Billing />} />

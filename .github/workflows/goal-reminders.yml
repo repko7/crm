@@ -1,0 +1,41 @@
+name: Goal Reminders
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+jobs:
+  send-reminder:
+    runs-on: ubuntu-latest
+    env:
+      BOT: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - name: Send Telegram reminder
+        run: |
+          HOUR=$(date -u +%H)
+          if [ "$HOUR" = "04" ]; then
+            SESSION="morning"
+          else
+            SESSION="evening"
+          fi
+          python3 -c "
+          import urllib.request, json, sys
+          session = sys.argv[1]
+          chat = sys.argv[2]
+          bot = sys.argv[3]
+          msgs = {
+            'morning': 'Доброго ранку, Олег! Кожного ранку пиши свої цілі та плани на день прямо сюди.',
+            'evening': 'Добрий вечір, Олег! Напиши що вдалося зробити сьогодні — збережу і порівняю з попередніми днями.'
+          }
+          text = msgs[session]
+          data = json.dumps({'chat_id': chat, 'text': text}).encode('utf-8')
+          req = urllib.request.Request(
+            'https://api.telegram.org/bot' + bot + '/sendMessage',
+            data=data,
+            headers={'Content-Type': 'application/json'}
+          )
+          print(urllib.request.urlopen(req).read().decode())
+          " "$SESSION" "$CHAT" "$BOT"

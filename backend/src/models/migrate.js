@@ -92,6 +92,17 @@ CREATE TABLE IF NOT EXISTS api_keys (
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS team_owner_id INTEGER REFERENCES users(id) ON DELETE SET NULL;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'owner';
+
+CREATE TABLE IF NOT EXISTS daily_goals (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  goal_date DATE NOT NULL,
+  position INTEGER NOT NULL,
+  text TEXT NOT NULL,
+  achieved BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, goal_date, position)
+);
 `;
 
 pool.query(schema)
