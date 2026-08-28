@@ -20,10 +20,12 @@ const FILTERS = [
 
 export default function Confidence() {
   const [entries, setEntries] = useState([]);
-  const [summary, setSummary] = useState({ counts: { win: 0, strength: 0, weakness: 0 }, confidence_score: 0, recall: null });
+  const [summary, setSummary] = useState({ counts: { win: 0, strength: 0, weakness: 0 }, confidence_score: 0, streak: 0, recall: null });
   const [filter, setFilter] = useState('all');
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState(EMPTY);
+  const [recap, setRecap] = useState(null);
+  const [recapLoading, setRecapLoading] = useState(false);
 
   const load = async () => {
     const [e, s] = await Promise.all([
@@ -56,6 +58,18 @@ export default function Confidence() {
     setSummary(s.data);
   };
 
+  const getRecap = async () => {
+    setRecapLoading(true);
+    try {
+      const { data } = await api.post('/confidence/recap');
+      setRecap(data.recap);
+    } catch {
+      toast.error('Не вдалося отримати підсумок');
+    } finally {
+      setRecapLoading(false);
+    }
+  };
+
   return (
     <div className="p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
@@ -74,7 +88,7 @@ export default function Confidence() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <div className="card">
           <div className="text-3xl font-bold text-green-600">{summary.counts.win}</div>
           <div className="text-sm text-slate-400 mt-1">Перемоги</div>
@@ -88,9 +102,27 @@ export default function Confidence() {
           <div className="text-sm text-slate-400 mt-1">Зони росту</div>
         </div>
         <div className="card">
+          <div className="text-3xl font-bold text-orange-500">{summary.streak || 0} 🔥</div>
+          <div className="text-sm text-slate-400 mt-1">Днів поспіль</div>
+        </div>
+        <div className="card">
           <div className="text-3xl font-bold text-indigo-600">{summary.confidence_score}%</div>
           <div className="text-sm text-slate-400 mt-1">Рівень впевненості</div>
         </div>
+      </div>
+
+      <div className="card mb-6">
+        <div className="flex items-center justify-between gap-4 mb-2">
+          <h3 className="font-semibold text-slate-800">🧠 AI-підсумок тижня</h3>
+          <button className="btn-secondary text-sm" onClick={getRecap} disabled={recapLoading}>
+            {recapLoading ? 'Аналізую...' : recap ? 'Оновити' : 'Отримати підсумок'}
+          </button>
+        </div>
+        {recap ? (
+          <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{recap}</p>
+        ) : (
+          <p className="text-sm text-slate-400">AI прочитає твої записи за останні 7 днів і напише коротке підбадьорливе резюме.</p>
+        )}
       </div>
 
       {summary.recall && (
