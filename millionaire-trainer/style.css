@@ -1,0 +1,370 @@
+:root {
+  --bg: #0f1115;
+  --bg-soft: #161923;
+  --card: #1c202c;
+  --border: #2a2f3d;
+  --text: #eef0f5;
+  --text-dim: #9aa1b2;
+  --accent: #f2b705;
+  --accent-2: #34d399;
+  --danger: #f87171;
+  --warn: #fbbf24;
+  --radius: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, var(--bg) 0%, #0b0d11 100%);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+#app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-emoji {
+  font-size: 36px;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.level-box {
+  min-width: 220px;
+}
+
+.level-name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.points {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 2px 0 6px;
+}
+
+.level-bar {
+  height: 8px;
+  background: #2a2f3d;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.level-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width 0.4s ease;
+}
+
+.level-next {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.deck-tile {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.deck-tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+
+.deck-emoji {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.deck-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.deck-subtitle {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 6px 0 10px;
+}
+
+.deck-meta {
+  font-size: 12px;
+  color: var(--accent-2);
+}
+
+.deck-topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.btn-back {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn-back:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.deck-label {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-scenario {
+  font-size: 17px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-btn {
+  text-align: left;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 14px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.4;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.option-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.option-btn:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.option-btn.chosen-best {
+  border-color: var(--accent-2);
+  background: rgba(52, 211, 153, 0.12);
+  opacity: 1;
+}
+
+.option-btn.chosen-ok {
+  border-color: var(--warn);
+  background: rgba(251, 191, 36, 0.1);
+  opacity: 1;
+}
+
+.option-btn.chosen-weak {
+  border-color: var(--danger);
+  background: rgba(248, 113, 113, 0.1);
+  opacity: 1;
+}
+
+.guiding-list {
+  margin: 0 0 16px;
+  padding-left: 20px;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.answer-box {
+  width: 100%;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  margin-bottom: 14px;
+}
+
+.answer-box:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.btn-reveal,
+.btn-next {
+  background: var(--accent);
+  color: #1a1400;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-reveal:hover,
+.btn-next:hover {
+  filter: brightness(1.05);
+}
+
+.btn-reveal:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.feedback-area {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--border);
+}
+
+.feedback-score {
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--accent-2);
+}
+
+.feedback-score--ok {
+  color: var(--warn);
+}
+
+.feedback-score--weak {
+  color: var(--danger);
+}
+
+.feedback-text {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.feedback-principle {
+  font-size: 13px;
+  color: var(--text-dim);
+  background: var(--bg-soft);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tip-item {
+  font-size: 14px;
+  line-height: 1.5;
+  background: var(--bg-soft);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.journal {
+  margin-top: 32px;
+}
+
+.journal h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--text-dim);
+}
+
+.journal-entry {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+
+.journal-prompt {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.journal-text {
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 560px) {
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .level-box {
+    width: 100%;
+  }
+}
