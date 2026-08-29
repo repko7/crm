@@ -92,6 +92,16 @@ CREATE TABLE IF NOT EXISTS api_keys (
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS team_owner_id INTEGER REFERENCES users(id) ON DELETE SET NULL;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'owner';
+
+CREATE TABLE IF NOT EXISTS confidence_entries (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  type VARCHAR(20) NOT NULL DEFAULT 'win',
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  entry_date DATE DEFAULT CURRENT_DATE,
+  created_at TIMESTAMP DEFAULT NOW()
+);
 `;
 
 pool.query(schema)

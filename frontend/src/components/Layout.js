@@ -8,6 +8,7 @@ const navItems = [
   { to: '/tasks', label: 'Tasks', icon: '✅' },
   { to: '/emails', label: 'Email', icon: '📧' },
   { to: '/reminders', label: 'Reminders', icon: '⏰' },
+  { to: '/confidence', label: 'Confidence', icon: '🌟' },
   { to: '/ai', label: 'AI Assistant', icon: '🤖' },
   { to: '/billing', label: 'Billing', icon: '💳' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },
